@@ -1,0 +1,36 @@
+- hosts: localhost
+  connection: local
+  become: true
+
+  pre_tasks:
+    - name: update repositories
+      apt:
+        update_cache: yes
+      changed_when: False
+
+  tasks:
+    - name: Create ansible user
+      user:
+        name: ansible
+        system: yes
+
+    - name: Add ansible user to sudoers
+      copy:
+        src: files/sudoers_ansible
+        dest: /etc/sudoers.d/ansible
+        owner: root
+        group: root
+        mode: 0440
+
+    - name: Pull from repo every 20 minutes
+      cron:
+        user: ansible
+        name: "ansible provision"
+        minute: "*/20"
+        job: "/usr/bin/ansible-pull -o -U https://github.com/victoitor/pargo-lab-ansible-pull.git > /dev/null"
+
+    - name: Install packages
+      apt:
+        name:
+          - htop
+          - neovim
