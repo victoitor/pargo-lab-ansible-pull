@@ -29,6 +29,41 @@
         minute: "*/20"
         job: "/usr/bin/ansible-pull -o -U https://github.com/victoitor/pargo-lab-ansible-pull.git > /dev/null"
 
+    - name: Install required packages for LDAP configuration
+      apt:
+        name:
+          - libnss-ldap
+          - libpam-ldap
+          - ldap-utils
+          - nscd            
+          - sssd
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+
+    - name: Connect to LDAP server
+      copy:
+        src: files/ldap.conf
+        dest: /etc/ldap.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Set up remote user authentication
+      copy:
+        src: files/nsswitch.conf
+        dest: /etc/nsswitch.conf
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Create home directory on first login
+      copy:
+        src: files/pam-common-session
+        dest: /etc/pam.d/common-session
+        owner: root
+        group: root
+        mode: 0644
+
     - name: Install packages
       apt:
         name:
