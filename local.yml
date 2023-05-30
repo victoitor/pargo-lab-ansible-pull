@@ -61,7 +61,6 @@
         name: python
         path: /usr/bin/python3
         link: /usr/local/bin/python
-        state: selected
         priority: 20
 
     - name: Download Epson printer driver
