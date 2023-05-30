@@ -70,6 +70,7 @@
       shell:
         cmd: lpstat -eE
       register: lpstat_out
+      changed_when: False
 
     - name: Configure Epson L4260 printer
       shell:
