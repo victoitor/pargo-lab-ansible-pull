@@ -66,7 +66,13 @@
       apt:
         deb: /home/ansible/.cache/epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb
 
+    - name: Check if Epson printer is already added
+      command:
+        cmd: lpstat -eE
+        register: lpstat_out
+
     - name: Configure Epson L4260 printer
       command:
         cmd: lpadmin -p ParGO-L4260 -v "lpd://10.102.54.103:515/PASSTHRU" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
+        when: lpstat_out.stdout.find('ParGO-L4260') == -1
 
