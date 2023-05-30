@@ -67,5 +67,6 @@
         deb: /home/ansible/.cache/epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb
 
     - name: Configure Epson L4260 printer
-      shell: lpadmin -p ParGO-L4260 -E -v "https://10.102.54.103:631/ipp/print" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
-      ignore_errors: True
+      command:
+        cmd: lpadmin -p ParGO-L4260 -v "lpd://10.102.54.103:515/PASSTHRU" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
+
