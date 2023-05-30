@@ -56,6 +56,14 @@
           - python3-pip
           - lsb
 
+    - name: Set Python3 as default python executable
+      community.general.alternatives:
+        name: python
+        path: /usr/bin/python3
+        link: /usr/local/bin/python
+        state: selected
+        priority: 20
+
     - name: Download Epson printer driver
       get_url:
         url: https://download3.ebz.epson.net/dsc/f/03/00/14/48/15/1d37501ad39bd2b5753a9cce3b2715b3e2fef557/epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb
