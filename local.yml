@@ -55,6 +55,7 @@
           - python3
           - python3-pip
           - lsb
+          - libqt5widgets5
 
     - name: Set Python3 as default python executable
       community.general.alternatives:
@@ -81,7 +82,11 @@
 
     - name: Install Epson Printer drivers
       apt:
-        deb: /home/ansible/.cache/epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb
+        deb: "/home/ansible/.cache/{{ item }}"
+      loop:
+        - epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb
+        - epsonscan2-bundle-6.7.61.0.x86_64.deb/core/epsonscan2_6.7.61.0-1_amd64.deb
+        - epsonscan2-bundle-6.7.61.0.x86_64.deb/plugins/epsonscan2-non-free-plugin_1.0.0.6-1_amd64.deb
 
     - name: Check if Epson printer is already added
       shell:
