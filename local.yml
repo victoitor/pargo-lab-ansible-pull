@@ -63,11 +63,17 @@
         link: /usr/local/bin/python
         priority: 20
 
-    - name: Download Epson printer driver
+    - name: Download Epson printer drivers
       get_url:
-        url: https://download3.ebz.epson.net/dsc/f/03/00/14/48/15/1d37501ad39bd2b5753a9cce3b2715b3e2fef557/epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb
-        dest: /home/ansible/.cache/epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb
-        checksum: sha512:583f1afddc6004471794e66a6b47e9ef328d98203a63dd0bd6ae0bbe3fcd2b93be0c906151d30406874da93b32b3c9da0c3562e02e6b08ef43fecba8d8aadd7e
+        url: "{{ item[0] }}"
+        dest: /home/ansible/.cache
+        checksum: "{{ item[1] }}"
+      loop:
+        - [ 'https://download3.ebz.epson.net/dsc/f/03/00/14/48/15/1d37501ad39bd2b5753a9cce3b2715b3e2fef557/epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb',
+            'sha512:583f1afddc6004471794e66a6b47e9ef328d98203a63dd0bd6ae0bbe3fcd2b93be0c906151d30406874da93b32b3c9da0c3562e02e6b08ef43fecba8d8aadd7e' ]
+        - [ 'https://download.ebz.epson.net/dsc/du/02/DriverDownloadInfo.do?LG2=JA&CN2=US&CTI=171&PRN=Linux%20deb%2064bit%20package&OSC=LX&DL',
+            'sha512:ca703cbc38101f48679aa9cdcc2462b48b30a0bc5a66f671f37783975ddc531106427379dfa1aa8c2178a3b7c9a8be45b1b3d8b832b8aecd0eb87d0be0f58d82' ]
+
 
     - name: Install Epson escpr driver
       apt:
@@ -83,4 +89,5 @@
       shell:
         cmd: lpadmin -p ParGO-L4260 -v "lpd://10.102.54.103:515/PASSTHRU" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
       when: lpstat_out.stdout.find('ParGO-L4260') == -1
+
 
