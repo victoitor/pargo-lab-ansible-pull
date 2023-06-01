@@ -1,0 +1,9 @@
+[Unit]
+Description=Add Epson Printer at Gnome startup
+
+[Service]
+ExecStart=/usr/bin/sh -c /etc/profile.d/add-epson-scanner.sh
+
+[Install]
+WantedBy=default.target
+

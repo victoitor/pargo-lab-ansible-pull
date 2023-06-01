@@ -99,3 +99,18 @@
         cmd: lpadmin -p ParGO-L4260 -v "lpd://10.102.54.103:515/PASSTHRU" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
       when: lpstat_out.stdout.find('ParGO-L4260') == -1
 
+    - name: Add Epson Scanner script
+      copy:
+        src: files/add-epson-scanner
+        dest: /usr/local/bin/add-epson-scanner
+        owner: ansible
+        group: root
+        mode: 0755
+
+    - name: Add Epson Scanner on login (graphical)
+      copy:
+        src: files/epson-scanner.desktop
+        dest: /etc/xdg/autostart/epson-scanner.desktop
+        owner: root
+        group: root
+        mode: 0644
