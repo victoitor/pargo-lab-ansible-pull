@@ -75,6 +75,7 @@
           - texlive-lang-french
           - texlive-xetex
           - texlive-luatex
+          - latexmk
           - biber
           - cb2bib
 
