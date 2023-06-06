@@ -60,6 +60,23 @@
           - lua5.4
           - lsb
           - libqt5widgets5
+          - pandoc
+          - pandoc-citeproc
+          - texlive-science
+          - texlive-publishers
+          - texlive-pictures
+          - texlive-games
+          - texlive-extra-utils
+          - texlive-bibtex-extra
+          - texlive-fonts-recommended
+          - texlive-lang-portuguese
+          - texlive-lang-english
+          - texlive-lang-spanish
+          - texlive-lang-french
+          - texlive-xetex
+          - texlive-luatex
+          - biber
+          - cb2bib
 
     - name: Install VSCode
       apt:
