@@ -97,7 +97,7 @@
 
     - name: Install gitlab cli
       apt:
-        deb: "https://gitlab.com/gitlab-org/cli/-/releases/v1.30.0/downloads/glab_1.32.0_Linux_x86_64.deb"
+        deb: "https://gitlab.com/gitlab-org/cli/-/releases/v1.32.0/downloads/glab_1.32.0_Linux_x86_64.deb"
 
     - name: Set Python3 as default python executable
       community.general.alternatives:
