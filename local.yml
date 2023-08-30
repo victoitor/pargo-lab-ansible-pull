@@ -82,6 +82,7 @@
           - latexmk
           - biber
           - cb2bib
+          - postgresql
 
     - name: Install VSCode
       apt:
