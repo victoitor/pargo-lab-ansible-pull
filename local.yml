@@ -100,6 +100,25 @@
       apt:
         deb: "https://gitlab.com/gitlab-org/cli/-/releases/v1.32.0/downloads/glab_1.32.0_Linux_x86_64.deb"
 
+    - name: Install pgAdmin4
+      block:
+        - name: Install public key from repository
+          get_url:
+            url: https://www.pgadmin.org/static/packages_pgadmin_org.pub
+            dest: /usr/share/keyrings/packages-pgadmin-org.asc
+            checksum: sha256:546cbd50f8cadcf0832dc0aef9959b1ccf0b7e9a5e99c1518784bcc46f455585
+        - name: Add repository
+          apt_repository:
+            repo: "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.asc] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/{{ ansible_distribution_release }} pgadmin4 main"
+            state: present
+            filename: pgadmin4.list
+        - name: Install
+          apt:
+            name: pgadmin4
+            update_cache: yes
+          environment:
+              DEBIAN_FRONTEND: noninteractive
+
     - name: Set Python3 as default python executable
       community.general.alternatives:
         name: python
