@@ -49,7 +49,7 @@
           - cmake
           - ninja-build
           - meson
-          - pkg-confi
+          - pkg-config
           - neovim
           - vim-gtk3
           - 7zip
