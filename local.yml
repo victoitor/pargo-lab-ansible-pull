@@ -30,11 +30,11 @@
         state: directory
         mode: '0755'
 
-    - name: Pull from repo every 20 minutes
+    - name: Pull from repo every 15 minutes
       cron:
         user: ansible
         name: "ansible provision"
-        minute: "*/20"
+        minute: "*/15"
         job: "/usr/bin/ansible-pull -o -U https://github.com/victoitor/pargo-lab-ansible-pull.git > /dev/null"
 
     - name: Install packages
@@ -49,7 +49,7 @@
           - cmake
           - ninja-build
           - meson
-          - pkg-config
+          - pkg-confi
           - neovim
           - vim-gtk3
           - 7zip
