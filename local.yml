@@ -127,6 +127,7 @@
           get_url:
             url: https://pargo-13.local/files/cplex_studio2211.linux_x86_64.bin
             dest: /home/ansible/.cache
+            mode: 0755
             checksum: sha512:12662bbc6c82d2415ad9d542cd64626124ecb281173c42959d1d2c9ab81acf5e65ab316944d5103512f3367a1fd3187d97387e71855b1a3ae13a82ba26bdae47
             validate_certs: false
           register: cplex_dl
