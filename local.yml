@@ -164,6 +164,8 @@
       unarchive:
         src: /home/ansible/.cache/epsonscan2-bundle-6.7.61.0.x86_64.deb.tar.gz
         dest: /home/ansible/.cache
+        owner: root
+        group: root
       when: epson_dl is changed and epson_dl is not failed
 
     - name: Install Epson Printer drivers
@@ -190,7 +192,7 @@
       copy:
         src: files/add-epson-scanner
         dest: /usr/local/bin/add-epson-scanner
-        owner: ansible
+        owner: root
         group: root
         mode: 0755
 
