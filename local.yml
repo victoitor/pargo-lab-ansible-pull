@@ -121,6 +121,25 @@
           environment:
               DEBIAN_FRONTEND: noninteractive
 
+    - name: Install CPLEX
+      block:
+        - name: Get CPLEX installer
+          get_url:
+            url: https://pargo-13.local/files/cplex_studio2211.linux_x86_64.bin
+            dest: /home/ansible/.cache
+            checksum: sha512:12662bbc6c82d2415ad9d542cd64626124ecb281173c42959d1d2c9ab81acf5e65ab316944d5103512f3367a1fd3187d97387e71855b1a3ae13a82ba26bdae47
+            validate_certs: false
+          register: cplex_dl
+        - name: Install CPLEX
+          shell:
+            cmd: /home/ansible/.cache/cplex_studio2211.linux_x86_64.bin -DLICENSE_ACCEPTED=TRUE -DUSER_INSTALL_DIR=/opt/ibm/ILOG/CPLEX_Studio2211 -r /home/ansible/cplex_studio2211.log -i silent
+          when: cplex_dl is changed and cplex_dl is not failed
+          register: cplex_install
+        - name: CPLEX post-installation
+          shell:
+            cmd: python /opt/ibm/ILOG/CPLEX_Studio2211/python/setup.py install
+          when: cplex_install is changed and cplex_install is not failed
+
     - name: Set Python3 as default python executable
       community.general.alternatives:
         name: python
