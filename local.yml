@@ -203,3 +203,11 @@
         owner: root
         group: root
         mode: 0644
+
+    - name: Add cluster access configuration
+      copy:
+        src: files/bastion-cluster.conf
+        dest: /etc/ssh/ssh_config.d/bastion-cluster.conf
+        owner: root
+        group: root
+        mode: 0644
