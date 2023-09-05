@@ -24,3 +24,22 @@ Depois, basta chamar `ansible-pull` a partir deste repositório:
 $ sudo ansible-pull -U https://github.com/victoitor/pargo-lab-ansible-pull.git
 ```
 
+## Guias
+
+### Acesso ao Cluster
+
+Essa configuração cadastra o cluster com o apelido `bastion`.
+Dessa forma, é possível se conectar ao cluster com o comando:
+
+```sh
+$ ssh <user>@bastion
+```
+
+em que `<user>` é o nome de usuário cadastrado no servidor.
+O cliente SSH tentará utilizar a chave `~/.ssh/id_ed25519`.
+Ou seja, os seguintes arquivos devem existir:
+
+```
+/home/<user>/.ssh/id_ed25519
+/home/<user>/.ssh/id_ed25519.pub
+```
