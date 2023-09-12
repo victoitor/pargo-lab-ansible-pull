@@ -43,6 +43,7 @@
           - openssh-client
           - openssh-server
           - htop
+          - net-tools
           - zsh
           - curl
           - build-essential
