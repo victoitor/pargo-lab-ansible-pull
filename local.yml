@@ -58,6 +58,7 @@
           - golang
           - python3
           - python3-pip
+          - python3-networkx
           - r-base
           - r-cran-devtools
           - r-cran-tidyverse
