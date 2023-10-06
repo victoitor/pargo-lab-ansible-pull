@@ -94,6 +94,8 @@
           - biber
           - cb2bib
           - postgresql
+          - graphviz
+          - dot2tex
 
     - name: Install VSCode
       apt:
