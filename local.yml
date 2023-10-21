@@ -37,6 +37,21 @@
         minute: "*/15"
         job: "/usr/bin/ansible-pull -o -U https://github.com/victoitor/pargo-lab-ansible-pull.git > /dev/null"
 
+    - name: Add pargoldap to hosts
+      lineinfile:
+        path: /etc/hosts
+        state: present
+        regexp: '(\s+)pargoldap\.ufc\.br(\s+)?$'
+        line: '10\.11\.13\.118    pargoldap\.ufc\.br'
+
+    - name: Add sssd configuration 
+      copy: 
+        src: files/pargoldap.conf
+        dest: /etc/sssd/conf.d/pargoldap.conf
+        owner: root
+        group: root
+        mode: 0600
+
     - name: Install packages
       apt:
         name:
@@ -96,6 +111,9 @@
           - postgresql
           - graphviz
           - dot2tex
+          - sssd
+          - sssd-ldap
+          - ldap-utils
 
     - name: Install VSCode
       apt:
