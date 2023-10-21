@@ -8,8 +8,8 @@
         update_cache: yes
       changed_when: False
 
-    - name: Create ansible user
   tasks:
+    - name: Create ansible user
       user:
         name: ansible
         system: yes
