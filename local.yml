@@ -116,6 +116,11 @@
         group: root
         mode: 0600
 
+    - name: Restart sssd service
+      service:
+        name: sssd
+        state: restarted
+
     - name: Install VSCode
       apt:
         deb: "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
