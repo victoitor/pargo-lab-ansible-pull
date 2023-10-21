@@ -1,0 +1,59 @@
+- name: Install VSCode
+  apt:
+    deb: "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
+
+- name: Install R-Studio
+  apt:
+    deb: "https://download1.rstudio.org/electron/jammy/amd64/rstudio-2023.06.0-421-amd64.deb"
+
+- name: Install github-cli
+  apt:
+    deb: "https://github.com/cli/cli/releases/download/v2.30.0/gh_2.30.0_linux_amd64.deb"
+
+- name: Install gitlab cli
+  apt:
+    deb: "https://gitlab.com/gitlab-org/cli/-/releases/v1.32.0/downloads/glab_1.32.0_Linux_x86_64.deb"
+
+- name: Install pgAdmin4
+  block:
+    - name: Install public key from repository
+      get_url:
+        url: https://www.pgadmin.org/static/packages_pgadmin_org.pub
+        dest: /usr/share/keyrings/packages-pgadmin-org.asc
+        checksum: sha256:546cbd50f8cadcf0832dc0aef9959b1ccf0b7e9a5e99c1518784bcc46f455585
+
+    - name: Add repository
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.asc] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/{{ ansible_distribution_release }} pgadmin4 main"
+        state: present
+        filename: pgadmin4.list
+
+    - name: Install
+      apt:
+        name: pgadmin4
+        update_cache: yes
+        environment:
+          DEBIAN_FRONTEND: noninteractive
+
+- name: Install CPLEX
+  block:
+    - name: Get CPLEX installer
+      get_url:
+        url: https://pargo-13.local/files/cplex_studio2211.linux_x86_64.bin
+        dest: /home/ansible/.cache
+        mode: 0755
+        checksum: sha512:12662bbc6c82d2415ad9d542cd64626124ecb281173c42959d1d2c9ab81acf5e65ab316944d5103512f3367a1fd3187d97387e71855b1a3ae13a82ba26bdae47
+        validate_certs: false
+      register: cplex_dl
+
+    - name: Install CPLEX
+      shell:
+        cmd: /home/ansible/.cache/cplex_studio2211.linux_x86_64.bin -DLICENSE_ACCEPTED=TRUE -DUSER_INSTALL_DIR=/opt/ibm/ILOG/CPLEX_Studio2211 -r /home/ansible/cplex_studio2211.log -i silent
+      when: cplex_dl is changed and cplex_dl is not failed
+      register: cplex_install
+
+    - name: CPLEX post-installation
+      shell:
+        cmd: python /opt/ibm/ILOG/CPLEX_Studio2211/python/setup.py install
+      when: cplex_install is changed and cplex_install is not failed
+

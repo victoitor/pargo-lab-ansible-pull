@@ -45,68 +45,12 @@
         state: present
 
     - name: Install packages
-      apt:
-        name:
-          - cron
-          - openssh-client
-          - openssh-server
-          - htop
-          - net-tools
-          - zsh
-          - curl
-          - build-essential
-          - cmake
-          - ninja-build
-          - meson
-          - pkg-config
-          - neovim
-          - vim-gtk3
-          - 7zip
-          - fzf
-          - golang
-          - python3
-          - python3-pip
-          - python3-numpy
-          - python3-networkx
-          - python3-matplotlib
-          - python3-scipy
-          - python3-pandas
-          - python3-sphinx
-          - jupyter-notebook
-          - ipython3
-          - r-base
-          - r-cran-devtools
-          - r-cran-tidyverse
-          - r-cran-plotly
-          - clang
-          - rustc
-          - lua5.4
-          - lsb
-          - libqt5widgets5
-          - pandoc
-          - pandoc-citeproc
-          - texlive-science
-          - texlive-publishers
-          - texlive-pictures
-          - texlive-games
-          - texlive-extra-utils
-          - texlive-bibtex-extra
-          - texlive-fonts-recommended
-          - texlive-lang-portuguese
-          - texlive-lang-english
-          - texlive-lang-spanish
-          - texlive-lang-french
-          - texlive-xetex
-          - texlive-luatex
-          - latexmk
-          - biber
-          - cb2bib
-          - postgresql
-          - graphviz
-          - dot2tex
-          - sssd
-          - sssd-ldap
-          - ldap-utils
+      import_tasks:
+        file: packages.yml
+
+    - name: Install useful softwares
+      import_tasks:
+        file: install.yml
 
     - name: Pull from repo every 15 minutes
       cron:
@@ -128,61 +72,6 @@
         name: sssd
         state: restarted
 
-    - name: Install VSCode
-      apt:
-        deb: "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
-
-    - name: Install R-Studio
-      apt:
-        deb: "https://download1.rstudio.org/electron/jammy/amd64/rstudio-2023.06.0-421-amd64.deb"
-
-    - name: Install github-cli
-      apt:
-        deb: "https://github.com/cli/cli/releases/download/v2.30.0/gh_2.30.0_linux_amd64.deb"
-
-    - name: Install gitlab cli
-      apt:
-        deb: "https://gitlab.com/gitlab-org/cli/-/releases/v1.32.0/downloads/glab_1.32.0_Linux_x86_64.deb"
-
-    - name: Install pgAdmin4
-      block:
-        - name: Install public key from repository
-          get_url:
-            url: https://www.pgadmin.org/static/packages_pgadmin_org.pub
-            dest: /usr/share/keyrings/packages-pgadmin-org.asc
-            checksum: sha256:546cbd50f8cadcf0832dc0aef9959b1ccf0b7e9a5e99c1518784bcc46f455585
-        - name: Add repository
-          apt_repository:
-            repo: "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.asc] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/{{ ansible_distribution_release }} pgadmin4 main"
-            state: present
-            filename: pgadmin4.list
-        - name: Install
-          apt:
-            name: pgadmin4
-            update_cache: yes
-          environment:
-              DEBIAN_FRONTEND: noninteractive
-
-    - name: Install CPLEX
-      block:
-        - name: Get CPLEX installer
-          get_url:
-            url: https://pargo-13.local/files/cplex_studio2211.linux_x86_64.bin
-            dest: /home/ansible/.cache
-            mode: 0755
-            checksum: sha512:12662bbc6c82d2415ad9d542cd64626124ecb281173c42959d1d2c9ab81acf5e65ab316944d5103512f3367a1fd3187d97387e71855b1a3ae13a82ba26bdae47
-            validate_certs: false
-          register: cplex_dl
-        - name: Install CPLEX
-          shell:
-            cmd: /home/ansible/.cache/cplex_studio2211.linux_x86_64.bin -DLICENSE_ACCEPTED=TRUE -DUSER_INSTALL_DIR=/opt/ibm/ILOG/CPLEX_Studio2211 -r /home/ansible/cplex_studio2211.log -i silent
-          when: cplex_dl is changed and cplex_dl is not failed
-          register: cplex_install
-        - name: CPLEX post-installation
-          shell:
-            cmd: python /opt/ibm/ILOG/CPLEX_Studio2211/python/setup.py install
-          when: cplex_install is changed and cplex_install is not failed
-
     - name: Set Python3 as default python executable
       community.general.alternatives:
         name: python
@@ -190,34 +79,9 @@
         link: /usr/local/bin/python
         priority: 20
 
-    - name: Download Epson printer drivers
-      get_url:
-        url: "{{ item[0] }}"
-        dest: /home/ansible/.cache
-        checksum: "{{ item[1] }}"
-      loop:
-        - [ 'https://download3.ebz.epson.net/dsc/f/03/00/14/48/15/1d37501ad39bd2b5753a9cce3b2715b3e2fef557/epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb',
-            'sha512:583f1afddc6004471794e66a6b47e9ef328d98203a63dd0bd6ae0bbe3fcd2b93be0c906151d30406874da93b32b3c9da0c3562e02e6b08ef43fecba8d8aadd7e' ]
-        - [ 'https://download.ebz.epson.net/dsc/du/02/DriverDownloadInfo.do?LG2=JA&CN2=US&CTI=171&PRN=Linux%20deb%2064bit%20package&OSC=LX&DL',
-            'sha512:ca703cbc38101f48679aa9cdcc2462b48b30a0bc5a66f671f37783975ddc531106427379dfa1aa8c2178a3b7c9a8be45b1b3d8b832b8aecd0eb87d0be0f58d82' ]
-      register: epson_dl
-
-    - name: Extract scanner driver
-      unarchive:
-        src: /home/ansible/.cache/epsonscan2-bundle-6.7.61.0.x86_64.deb.tar.gz
-        dest: /home/ansible/.cache
-        owner: root
-        group: root
-      when: epson_dl is changed and epson_dl is not failed
-
-    - name: Install Epson Printer drivers
-      apt:
-        deb: "/home/ansible/.cache/{{ item }}"
-      loop:
-        - epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb
-        - epsonscan2-bundle-6.7.61.0.x86_64.deb/core/epsonscan2_6.7.61.0-1_amd64.deb
-        - epsonscan2-bundle-6.7.61.0.x86_64.deb/plugins/epsonscan2-non-free-plugin_1.0.0.6-1_amd64.deb
-      when: epson_dl is changed
+    - name: Install Epson printer's driver
+      import_task:
+        file: epson.yml
 
     - name: Check if Epson printer is already added
       shell:
