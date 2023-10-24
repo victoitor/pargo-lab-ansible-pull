@@ -35,7 +35,7 @@
         path: /etc/hosts
         state: present
         regexp: '(\s+)pargoldap\.ufc\.br(\s+)?$'
-        line: '10\.11\.13\.118    pargoldap\.ufc\.br'
+        line: '10.11.13.118    pargoldap.ufc.br'
 
     - name: Create homedir at login
       lineinfile:
