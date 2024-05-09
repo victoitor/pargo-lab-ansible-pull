@@ -103,11 +103,11 @@
 
     - name: Install R-Studio
       apt:
-        deb: "https://download1.rstudio.org/electron/jammy/amd64/rstudio-2023.06.0-421-amd64.deb"
+        deb: "https://download1.rstudio.org/electron/jammy/amd64/rstudio-2024.04.0-735-amd64.deb"
 
     - name: Install github-cli
       apt:
-        deb: "https://github.com/cli/cli/releases/download/v2.30.0/gh_2.30.0_linux_amd64.deb"
+        deb: "https://github.com/cli/cli/releases/download/v2.49.1/gh_2.49.1_linux_amd64.deb"
 
     - name: Install gitlab cli
       apt:
