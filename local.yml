@@ -197,7 +197,7 @@
 
     - name: Configure Epson L4260 printer
       shell:
-        cmd: lpadmin -p ParGO-L4260 -v "lpd://10.102.54.103:515/PASSTHRU" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
+        cmd: lpadmin -p ParGO-L4260 -v "lpd://10.102.54.67:515/PASSTHRU" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
       when: lpstat_out.stdout.find('ParGO-L4260') == -1
 
     - name: Add Epson Scanner script
