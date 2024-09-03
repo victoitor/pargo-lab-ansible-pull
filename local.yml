@@ -193,7 +193,7 @@
       shell:
         cmd: lpstat -v Pargo-L4260
       register: lpstat_out
-      changed_when: False
+      changed_when: True
 
     - name: Configure Epson L4260 printer
       shell:
