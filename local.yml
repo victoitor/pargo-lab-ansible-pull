@@ -90,6 +90,7 @@
           - texlive-lang-french
           - texlive-xetex
           - texlive-luatex
+          - texlive-pstricks
           - latexmk
           - biber
           - cb2bib
