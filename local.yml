@@ -191,14 +191,14 @@
 
     - name: Check if Epson printer is already added
       shell:
-        cmd: lpstat -eE
+        cmd: lpstat -v Pargo-L4260
       register: lpstat_out
       changed_when: False
 
     - name: Configure Epson L4260 printer
       shell:
         cmd: lpadmin -p ParGO-L4260 -v "lpd://10.102.54.67:515/PASSTHRU" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
-      when: lpstat_out.stdout.find('ParGO-L4260') == -1
+      when: lpstat_out.stdout.find('lpd://10.102.54.67:515/PASSTHRU') == -1
 
     - name: Add Epson Scanner script
       copy:
