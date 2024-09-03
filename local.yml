@@ -8,12 +8,6 @@
         update_cache: yes
       changed_when: False
 
-    - name: Check if Epson printer is already added
-      shell:
-        cmd: lpstat -v Pargo-L4260
-      register: lpstat_out
-      changed_when: False
-
   tasks:
     - name: Create ansible user
       user:
@@ -195,10 +189,16 @@
         - epsonscan2-bundle-6.7.61.0.x86_64.deb/plugins/epsonscan2-non-free-plugin_1.0.0.6-1_amd64.deb
       when: epson_dl is changed
 
+    - name: Check if Epson printer is already added
+      shell:
+        cmd: lpstat -v Pargo-L4260
+      register: lpstat_out
+      changed_when: False
+
     - name: Configure Epson L4260 printer
       shell:
         cmd: lpadmin -p ParGO-L4260 -v "lpd://10.102.54.67:515/PASSTHRU" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
-      when: lpstat_out.stdout.find('lpd://10.102.54.67:515/PASSTHRU') == -1
+      when: lpstat_out.stdout.find('lpd://10.102.54.67:515/PASSTHRU') != -1
 
     - name: Add Epson Scanner script
       copy:
