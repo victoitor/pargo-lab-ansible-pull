@@ -172,61 +172,80 @@
         link: /usr/local/bin/python
         priority: 20
 
-    - name: Download Epson printer drivers
-      get_url:
-        url: "{{ item[0] }}"
-        dest: /home/ansible/.cache
-        checksum: "{{ item[1] }}"
-      loop:
-        - [ 'https://download3.ebz.epson.net/dsc/f/03/00/14/48/15/1d37501ad39bd2b5753a9cce3b2715b3e2fef557/epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb',
-            'sha512:583f1afddc6004471794e66a6b47e9ef328d98203a63dd0bd6ae0bbe3fcd2b93be0c906151d30406874da93b32b3c9da0c3562e02e6b08ef43fecba8d8aadd7e' ]
-        - [ 'https://download.ebz.epson.net/dsc/du/02/DriverDownloadInfo.do?LG2=JA&CN2=US&CTI=171&PRN=Linux%20deb%2064bit%20package&OSC=LX&DL',
-            'sha512:ca703cbc38101f48679aa9cdcc2462b48b30a0bc5a66f671f37783975ddc531106427379dfa1aa8c2178a3b7c9a8be45b1b3d8b832b8aecd0eb87d0be0f58d82' ]
-      register: epson_dl
+    - name: Setup ParGO printer
+      block:
+        - name: Check if printer driver is installed
+          apt:
+            name: "{{ item }}"
+            state: present
+          check_mode: true
+          ignore_errors: true
+          loop:
+            - epson-inkjet-printer-escpr
+            - epsonscan2
+            - epsonscan2-non-free-plugin
+          register: epson_check
 
-    - name: Extract scanner driver
-      unarchive:
-        src: /home/ansible/.cache/epsonscan2-bundle-6.7.61.0.x86_64.deb.tar.gz
-        dest: /home/ansible/.cache
-        owner: root
-        group: root
-      when: epson_dl is changed and epson_dl is not failed
+        - name: Download Epson printer drivers
+          get_url:
+            url: "{{ item[0] }}"
+            dest: /home/ansible/.cache
+            checksum: "{{ item[1] }}"
+          loop:
+            - [ 'https://download3.ebz.epson.net/dsc/f/03/00/14/48/15/1d37501ad39bd2b5753a9cce3b2715b3e2fef557/epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb',
+                'sha512:583f1afddc6004471794e66a6b47e9ef328d98203a63dd0bd6ae0bbe3fcd2b93be0c906151d30406874da93b32b3c9da0c3562e02e6b08ef43fecba8d8aadd7e' ]
+            - [ 'https://download.ebz.epson.net/dsc/du/02/DriverDownloadInfo.do?LG2=JA&CN2=US&CTI=171&PRN=Linux%20deb%2064bit%20package&OSC=LX&DL',
+                'sha512:ca703cbc38101f48679aa9cdcc2462b48b30a0bc5a66f671f37783975ddc531106427379dfa1aa8c2178a3b7c9a8be45b1b3d8b832b8aecd0eb87d0be0f58d82' ]
+          ignore_errors: true
+          register: epson_dl
+          when: epson_check is failed
 
-    - name: Install Epson Printer drivers
-      apt:
-        deb: "/home/ansible/.cache/{{ item }}"
-      loop:
-        - epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb
-        - epsonscan2-bundle-6.7.61.0.x86_64.deb/core/epsonscan2_6.7.61.0-1_amd64.deb
-        - epsonscan2-bundle-6.7.61.0.x86_64.deb/plugins/epsonscan2-non-free-plugin_1.0.0.6-1_amd64.deb
-      when: epson_dl is changed
+        - name: Extract scanner driver
+          unarchive:
+            src: /home/ansible/.cache/epsonscan2-bundle-6.7.61.0.x86_64.deb.tar.gz
+            dest: /home/ansible/.cache
+            owner: root
+            group: root
+          ignore_errors: true
+          when: epson_dl is changed and epson_dl is not failed
 
-    - name: Check if Epson printer is already added
-      shell:
-        cmd: lpstat -v Pargo-L4260
-      register: lpstat_out
-      changed_when: False
+        - name: Install Epson Printer drivers
+          apt:
+            deb: "/home/ansible/.cache/{{ item }}"
+          loop:
+            - epson-inkjet-printer-escpr_1.7.26-1lsb3.2_amd64.deb
+            - epsonscan2-bundle-6.7.61.0.x86_64.deb/core/epsonscan2_6.7.61.0-1_amd64.deb
+            - epsonscan2-bundle-6.7.61.0.x86_64.deb/plugins/epsonscan2-non-free-plugin_1.0.0.6-1_amd64.deb
+          ignore_errors: true
+          when: epson_dl is changed
 
-    - name: Configure Epson L4260 printer
-      shell:
-        cmd: lpadmin -p ParGO-L4260 -v "lpd://10.102.54.67:515/PASSTHRU" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
-      when: lpstat_out.stdout.find('lpd://10.102.54.67:515/PASSTHRU') == -1
+        - name: Check if Epson printer is already added
+          shell:
+            cmd: lpstat -v Pargo-L4260 2>&1
+          ignore_errors: true
+          register: lpstat_out
+          changed_when: False
 
-    - name: Add Epson Scanner script
-      copy:
-        src: files/add-epson-scanner
-        dest: /usr/local/bin/add-epson-scanner
-        owner: root
-        group: root
-        mode: 0755
+        - name: Configure Epson L4260 printer
+          shell:
+            cmd: lpadmin -p ParGO-L4260 -v "lpd://10.102.54.67:515/PASSTHRU" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
+          when: lpstat_out.stdout.find('lpd://10.102.54.67:515/PASSTHRU') == -1
 
-    - name: Add Epson Scanner on login (graphical)
-      copy:
-        src: files/epson-scanner.desktop
-        dest: /etc/xdg/autostart/epson-scanner.desktop
-        owner: root
-        group: root
-        mode: 0644
+        - name: Add Epson Scanner script
+          copy:
+            src: files/add-epson-scanner
+            dest: /usr/local/bin/add-epson-scanner
+            owner: root
+            group: root
+            mode: 0755
+
+        - name: Add Epson Scanner on login (graphical)
+          copy:
+            src: files/epson-scanner.desktop
+            dest: /etc/xdg/autostart/epson-scanner.desktop
+            owner: root
+            group: root
+            mode: 0644
 
     - name: Add cluster access configuration
       copy:
