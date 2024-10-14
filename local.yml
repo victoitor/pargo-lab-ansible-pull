@@ -99,6 +99,7 @@
           - postgresql
           - graphviz
           - dot2tex
+          - djvulibre-bin
 
     - name: Install Flatpak
       block:
