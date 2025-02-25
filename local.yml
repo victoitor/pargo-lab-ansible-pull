@@ -78,7 +78,6 @@
           - lsb
           - libqt5widgets5
           - pandoc
-          - pandoc-citeproc
           - texlive-science
           - texlive-publishers
           - texlive-pictures
