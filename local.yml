@@ -75,6 +75,7 @@
           - cargo
           - lua5.4
           - default-jdk
+          - lsb-base
           - libqt5widgets5
           - pandoc
           - texlive-science
@@ -155,6 +156,7 @@
             checksum: sha512:12662bbc6c82d2415ad9d542cd64626124ecb281173c42959d1d2c9ab81acf5e65ab316944d5103512f3367a1fd3187d97387e71855b1a3ae13a82ba26bdae47
             validate_certs: false
           register: cplex_dl
+          ignore_errors: true
         - name: Install CPLEX
           shell:
             cmd: /home/ansible/.cache/cplex_studio2211.linux_x86_64.bin -DLICENSE_ACCEPTED=TRUE -DUSER_INSTALL_DIR=/opt/ibm/ILOG/CPLEX_Studio2211 -r /home/ansible/cplex_studio2211.log -i silent
@@ -232,6 +234,7 @@
           shell:
             cmd: lpadmin -p ParGO-L4260 -v "lpd://10.102.54.67:515/PASSTHRU" -m "lsb/usr/epson-inkjet-printer-escpr/Epson/Epson-L4260_Series-epson-inkjet-printer-escpr.ppd.gz"
           when: lpstat_out.stdout.find('lpd://10.102.54.67:515/PASSTHRU') == -1
+          ignore_errors: true
 
         - name: Add Epson Scanner script
           copy:
