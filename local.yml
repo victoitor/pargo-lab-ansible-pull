@@ -75,7 +75,6 @@
           - cargo
           - lua5.4
           - default-jdk
-          - lsb
           - libqt5widgets5
           - pandoc
           - texlive-science
